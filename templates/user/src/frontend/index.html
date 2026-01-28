@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{PROJECT_NAME_TITLE}}</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <dialog id="about-dialog">
+      <div class="about-content">
+        <div class="about-header">
+          <h2>About {{PROJECT_NAME_TITLE}}</h2>
+          <button id="close-about" class="icon-btn" aria-label="Close">&times;</button>
+        </div>
+        <div class="about-body">
+          <p class="about-subtitle">Powered by @mchen-lab/app-kit</p>
+          <div class="about-details">
+            <div class="detail-row">
+              <span class="detail-label">Version</span>
+              <span id="modal-version" class="detail-value">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Commit</span>
+              <span id="modal-commit" class="detail-value">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Port</span>
+              <span id="modal-port" class="detail-value">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Health</span>
+              <span id="modal-status" class="detail-value">-</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-footer">
+          <button id="close-about-btn" class="btn primary">Close</button>
+        </div>
+      </div>
+    </dialog>
+    <button id="open-about-btn" class="about-btn" title="About">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+    </button>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

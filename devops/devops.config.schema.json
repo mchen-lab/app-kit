@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DevOps Configuration",
+  "description": "Configuration for app-kit DevOps templates",
+  "type": "object",
+  "required": ["projectName", "imageName"],
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "Human-readable project name for display in scripts"
+    },
+    "packageJsonPath": {
+      "type": "string",
+      "description": "Path to package.json relative to project root (default: '.')",
+      "default": "."
+    },
+    "ghcrOrg": {
+      "type": "string",
+      "description": "GitHub Container Registry organization name"
+    },
+    "dockerHubUser": {
+      "type": "string",
+      "description": "Docker Hub username"
+    },
+    "imageName": {
+      "type": "string",
+      "description": "Docker image name (without registry prefix)"
+    },
+    "containerName": {
+      "type": "string",
+      "description": "Container name for docker run (defaults to imageName)"
+    },
+    "volumeName": {
+      "type": "string",
+      "description": "Data volume name for persistence"
+    },
+    "builderName": {
+      "type": "string",
+      "description": "Docker buildx builder name (defaults to imageName-builder)"
+    },
+    "ports": {
+      "type": "array",
+      "description": "Port mappings for docker run",
+      "items": {
+        "oneOf": [
+          {
+            "type": "number",
+            "description": "Single port (same host and container)"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "host": { "type": "number" },
+              "container": { "type": "number" }
+            },
+            "required": ["host", "container"]
+          }
+        ]
+      }
+    }
+  }
+}

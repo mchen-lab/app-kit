@@ -6,3 +6,4 @@ dist-server
 .DS_Store
 coverage
 .vscode
+vite.config.ts.timestamp*

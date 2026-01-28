@@ -1,11 +1,29 @@
 {
   "name": "@mchen-lab/app-kit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Standard Application Shell for the News Workspace Fleet",
+  "type": "module",
   "main": "dist/backend/index.js",
+  "bin": {
+    "app-kit": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
   "exports": {
-    "./backend": "./dist/backend/index.js",
-    "./frontend": "./dist/frontend/index.js"
+    "./backend": {
+      "types": "./dist/backend/index.d.ts",
+      "default": "./dist/backend/index.js"
+    },
+    "./frontend": {
+      "types": "./dist/frontend/index.d.ts",
+      "default": "./dist/frontend/index.js"
+    },
+    "./components": {
+      "types": "./dist/frontend/components.d.ts",
+      "default": "./dist/frontend/components.js"
+    }
   },
   "scripts": {
     "build": "tsc"
@@ -21,6 +39,12 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.18",
     "@types/node": "^20.8.0",
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
     "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
   }
 }
+
