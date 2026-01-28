@@ -61,6 +61,28 @@ Managed files are marked with a header:
 - `.github/workflows/ci.yml`
 - `restart.sh`
 - Valid scripts in `devops/`
+- `Dockerfile`
+- `vite.config.ts`
+
+## Versioning & Commit Tracking
+
+App-Kit identifies your application's state using three key pieces of information:
+
+1.  **Version**: Read from `package.json`. In production, this is prefixed with `v` and appended with `BUILD_METADATA` (e.g., `v0.1.0-dev-20260128`).
+2.  **Commit Hash**: Captured from the host environment during build. 
+    - **Development**: Vite attempts to run `git rev-parse --short HEAD`.
+    - **Production**: Injected as an `ARG` during Docker build (`GIT_COMMIT`).
+3.  **Port**: Dynamically reported by the backend API at runtime.
+
+### ⚠️ Git Requirement
+For the **Commit Hash** to be correctly captured, your project **must be a Git repository** with at least one commit. If it is not a git repo, the hash will display as `unknown`.
+
+```bash
+# Initialize git if you haven't already
+git init
+git add .
+git commit -m "initial commit"
+```
 
 ## Local Development
 

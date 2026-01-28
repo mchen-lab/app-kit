@@ -9,13 +9,20 @@ This project was bootstrapped with [@mchen-lab/app-kit](https://github.com/mchen
     npm install
     ```
 
-2.  **Start Development Server**
+2.  **Initialize Git (Recommended)**
+    To capture the commit hash for the "About" dialog, initialize a git repository and make an initial commit:
     ```bash
-    npm run dev
+    git init && git add . && git commit -m "initial commit"
     ```
-    This will start the backend server and the frontend development server (via Vite middleware).
 
-3.  **Build for Production**
+3.  **Start Development Server**
+    Use the provided `restart.sh` script to start the server. This script handles port cleanup and log rotation:
+    ```bash
+    ./restart.sh
+    ```
+    Alternatively, you can run `npm run dev`.
+
+4.  **Build for Production**
     ```bash
     npm run build
     ```
