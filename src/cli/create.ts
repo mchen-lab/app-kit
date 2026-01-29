@@ -13,6 +13,7 @@ import {
 export interface CreateOptions {
   port: number;
   withFrontend: boolean;
+  react: boolean;
 }
 
 export async function createProject(
@@ -79,18 +80,34 @@ export async function createProject(
   }
 
   // Copy user-owned files (no headers)
-  const userFiles = [
+  const userFiles: Array<{ src: string; dest: string }> = [
     { src: "user/server-index.ts", dest: "src/server/index.ts" },
     { src: "user/devops.config.json", dest: "devops.config.json" },
-    { src: "user/package.json", dest: "package.json" },
+    { src: options.react ? "user/package.react.json" : "user/package.json", dest: "package.json" },
     { src: "user/gitignore", dest: ".gitignore" },
-    { src: "user/src/frontend/index.html", dest: "src/frontend/index.html" },
-    { src: "user/src/frontend/main.ts", dest: "src/frontend/main.ts" },
-    { src: "user/src/frontend/app.ts", dest: "src/frontend/app.ts" },
-    { src: "user/src/frontend/styles.css", dest: "src/frontend/styles.css" },
     { src: "user/README.md", dest: "README.md" },
     { src: "user/CHANGELOG.md", dest: "CHANGELOG.md" },
   ];
+
+  if (options.withFrontend) {
+    if (options.react) {
+      userFiles.push(
+        { src: "user/src/frontend-react/index.html", dest: "src/frontend/index.html" },
+        { src: "user/src/frontend-react/main.tsx", dest: "src/frontend/main.tsx" },
+        { src: "user/src/frontend-react/App.tsx", dest: "src/frontend/App.tsx" },
+        { src: "user/src/frontend-react/styles.css", dest: "src/frontend/styles.css" },
+        { src: "user/src/frontend-react/components/VersionBanner.tsx", dest: "src/frontend/components/VersionBanner.tsx" },
+        { src: "user/src/frontend-react/components/AboutDialog.tsx", dest: "src/frontend/components/AboutDialog.tsx" }
+      );
+    } else {
+      userFiles.push(
+        { src: "user/src/frontend/index.html", dest: "src/frontend/index.html" },
+        { src: "user/src/frontend/main.ts", dest: "src/frontend/main.ts" },
+        { src: "user/src/frontend/app.ts", dest: "src/frontend/app.ts" },
+        { src: "user/src/frontend/styles.css", dest: "src/frontend/styles.css" }
+      );
+    }
+  }
 
   for (const { src, dest } of userFiles) {
     const templatePath = path.join(templatesDir, src);

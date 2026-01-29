@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Animations matching standard ui */
+  --animate-in: animate-in 0.2s ease-out;
+  --animate-out: animate-out 0.2s ease-in;
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-fade-out: fade-out 0.2s ease-in;
+  --animate-zoom-in-95: zoom-in-95 0.2s ease-out;
+  --animate-zoom-out-95: zoom-out-95 0.2s ease-in;
+  --animate-slide-in-from-top-2: slide-in-from-top-2 0.2s ease-out;
+  
+  @keyframes animate-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-slate-900 bg-white;
+  }
+}
+
+/* Custom micro-animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in;
+}

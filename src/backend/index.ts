@@ -187,6 +187,17 @@ export class AppKit {
       });
     });
 
+    // Documentation (README.md)
+    router.get("/docs", async (req, res) => {
+        try {
+            const readmePath = path.resolve(process.cwd(), "README.md");
+            const content = await fs.readFile(readmePath, "utf-8");
+            res.json({ content });
+        } catch {
+            res.status(404).json({ error: "README.md not found" });
+        }
+    });
+
     this.app.use("/api", router);
 
     // Static Serving (Standard Vite Dist)

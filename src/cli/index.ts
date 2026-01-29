@@ -19,6 +19,7 @@ Usage:
 Create Options:
   --port <port>         Default port for the service (default: 3000)
   --no-frontend         Skip frontend setup
+  --vanilla             Use Vanilla TS instead of React for frontend
 
 Update Options:
   --dry-run             Show what would be updated without making changes
@@ -52,9 +53,10 @@ async function main() {
       process.exit(1);
     }
 
-    const options = {
+    const options: { port: number; withFrontend: boolean; react: boolean } = {
       port: 3000,
       withFrontend: true,
+      react: true,
     };
 
     // Parse options
@@ -64,6 +66,9 @@ async function main() {
         i++;
       } else if (args[i] === "--no-frontend") {
         options.withFrontend = false;
+        options.react = false;
+      } else if (args[i] === "--vanilla") {
+        options.react = false;
       }
     }
 

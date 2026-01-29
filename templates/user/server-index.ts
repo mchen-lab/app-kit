@@ -81,6 +81,8 @@ app.post("/api/config-example", async (req: Request, res: Response) => {
 async function start() {
   await appKit.initialize();
 
+  const server = createServer(app);
+
   // Frontend Serving Logic
   if (isProduction) {
     // Production: Serve built static files
@@ -99,7 +101,10 @@ async function start() {
       const frontendDir = path.resolve(__dirname, "../frontend");
       
       const viteServer = await vite.createServer({
-        server: { middlewareMode: true },
+        server: { 
+          middlewareMode: true,
+          hmr: { server }
+        },
         appType: "spa",
         root: frontendDir,
         configFile: path.resolve(frontendDir, "../../vite.config.ts"),
@@ -118,8 +123,6 @@ async function start() {
       console.error("Failed to start Vite middleware", e);
     }
   }
-
-  const server = createServer(app);
 
   server.listen(PORT, () => {
     console.log(`🚀 {{PROJECT_NAME_TITLE}} running on http://localhost:${PORT}`);

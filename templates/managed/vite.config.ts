@@ -3,6 +3,8 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,6 +27,7 @@ export default defineConfig({
     '__APP_VERSION__': JSON.stringify('v' + packageJson.version + (process.env.BUILD_METADATA || '')),
     '__COMMIT_HASH__': JSON.stringify(commitHash),
   },
+  plugins: [react(), tailwindcss()],
   root: "src/frontend",
   
   server: {
