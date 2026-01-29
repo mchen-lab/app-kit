@@ -80,3 +80,4 @@ export function useAppKit() {
     updateSettings
   };
 }
+export { VersionBanner, AboutDialog } from './components.js';

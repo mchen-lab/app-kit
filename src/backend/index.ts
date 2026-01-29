@@ -82,19 +82,8 @@ export class AppKit {
     try {
       await fs.mkdir(path.dirname(this.configPath), { recursive: true });
 
-      // 1. Load from file
-      try {
-        const fileContent = await fs.readFile(this.configPath, "utf-8");
-        const fileConfig = JSON.parse(fileContent);
-        this.config = { ...this.config, ...fileConfig };
-        this.log(`Loaded config from ${this.configPath}`);
-      } catch (e) {
-        this.log(`Config file not found or invalid, using defaults.`, 'warn');
-      }
-
-      // 2. Hydrate from Environment Variables
-      // Strategy: Look for APP_CONFIG_KEY=value or just matching keys from defaultConfig
-      // For simplicity, we'll check for keys present in defaultConfig (case-insensitive)
+      // 1. Hydrate from Environment Variables (Default < Env)
+      // Strategy: Look for keys present in defaultConfig (case-insensitive)
       const envKeys = Object.keys(process.env);
       for (const configKey of Object.keys(this.options.defaultConfig)) {
         const envKey = configKey.toUpperCase().replace(/[^A-Z0-9]/g, '_');
@@ -110,6 +99,17 @@ export class AppKit {
           }
           this.log(`Overridden ${configKey} from environment variable ${envKey}`);
         }
+      }
+
+      // 2. Load from file (Env < File/UI)
+      // Settings.json has the highest priority (User overrides)
+      try {
+        const fileContent = await fs.readFile(this.configPath, "utf-8");
+        const fileConfig = JSON.parse(fileContent);
+        this.config = { ...this.config, ...fileConfig };
+        this.log(`Loaded config from ${this.configPath}`);
+      } catch (e) {
+        this.log(`Config file not found or invalid, using defaults/env.`, 'warn');
       }
 
       // 3. Save effective config back to disk (optional, but good for visibility)
