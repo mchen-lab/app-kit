@@ -93,8 +93,7 @@ start_server() {
     # Start server with watch mode enabled
     cd "$PROJECT_ROOT"
     # Use npx tsx watch to start the server in watch mode
-    # --watch-path src ensures we only restart when source code changes
-    npx tsx watch --watch-path src --ignore 'vite.config.ts.timestamp*' src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
+    npx tsx watch --exclude 'logs/*' --exclude 'data/*' --exclude 'vite.config.ts.timestamp*' src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
     SERVER_PID=$!
     echo "✅ Server started with PID: $SERVER_PID"
     echo "📝 Server logs: $PROJECT_ROOT/logs/server.log"
