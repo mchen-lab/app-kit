@@ -15,6 +15,7 @@ export interface AppKitOptions {
   configPath?: string;
   disableStatic?: boolean;
   onConfigChange?: (config: BaseConfig) => void;
+  recreateMissingConfig?: boolean;
 }
 
 // Utility function for checking file existence
@@ -110,6 +111,9 @@ export class AppKit {
         this.log(`Loaded config from ${this.configPath}`);
       } catch (e) {
         this.log(`Config file not found or invalid, using defaults/env.`, 'warn');
+        if (this.options.recreateMissingConfig) {
+          await this.saveConfig();
+        }
       }
 
       // 3. (Removed) Save effective config back to disk to avoid restart loops in dev mode
