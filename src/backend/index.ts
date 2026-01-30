@@ -112,8 +112,8 @@ export class AppKit {
         this.log(`Config file not found or invalid, using defaults/env.`, 'warn');
       }
 
-      // 3. Save effective config back to disk (optional, but good for visibility)
-      await fs.writeFile(this.configPath, JSON.stringify(this.config, null, 2));
+      // 3. (Removed) Save effective config back to disk to avoid restart loops in dev mode
+      // If you want to force save, call appKit.saveConfig() explicitly.
 
     } catch (e) {
       this.log(`Failed to load config: ${e instanceof Error ? e.message : String(e)}`, 'error');
