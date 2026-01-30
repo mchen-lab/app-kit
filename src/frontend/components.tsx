@@ -47,18 +47,18 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={() => onOpenChange(false)}
     >
       <div 
-        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-background rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b flex items-center justify-between bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">About {appName}</h2>
+        <div className="px-6 py-4 border-b flex items-center justify-between bg-muted/30">
+          <h2 className="text-lg font-semibold text-foreground">About {appName}</h2>
           <button 
             onClick={() => onOpenChange(false)}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -68,29 +68,31 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({
         
         <div className="p-6 space-y-4">
           <div className="space-y-1">
-            <p className="text-sm text-slate-500 uppercase tracking-wider font-medium">Description</p>
-            <p className="text-slate-700">{description || `Professional application powered by @mchen-lab/app-kit.`}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Description</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">
+              {description || `A professional application powered by @mchen-lab/app-kit, designed for high performance and reliability.`}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 pt-2">
             <div className="space-y-1">
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Version</p>
-              <p className="text-sm font-mono bg-slate-100 px-2 py-0.5 rounded inline-block">v{version || '0.1.0'}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Version</p>
+              <p className="text-sm font-mono bg-muted px-2 py-0.5 rounded inline-block">v{version || '0.1.0'}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Commit</p>
-              <p className="text-sm font-mono bg-slate-100 px-2 py-0.5 rounded inline-block">{commit?.substring(0, 7) || 'unknown'}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Commit</p>
+              <p className="text-sm font-mono bg-muted px-2 py-0.5 rounded inline-block">{commit?.substring(0, 7) || 'unknown'}</p>
             </div>
           </div>
 
           {repoUrl && (
-            <div className="pt-2">
-              <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Repository</p>
+            <div className="pt-2 border-t border-dashed mt-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Repository</p>
               <a 
                 href={repoUrl} 
                 target="_blank" 
                 rel="noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
+                className="text-sm text-primary hover:underline inline-flex items-center gap-1 font-medium"
               >
                 {repoUrl.replace(/^https?:\/\//, '')}
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,10 +103,10 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({
           )}
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-t flex justify-end">
+        <div className="px-6 py-4 bg-muted/30 border-t flex justify-end">
           <button 
             onClick={() => onOpenChange(false)}
-            className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity text-sm font-medium cursor-pointer"
           >
             Close
           </button>
