@@ -32,6 +32,9 @@ RUN npm run build:server
 # Production stage
 FROM node:20-alpine AS production
 
+# Architecture support
+ARG TARGETARCH
+
 # Install basic tools
 RUN apk add --no-cache ca-certificates
 
