@@ -11,25 +11,36 @@ Provides a consistent foundation for web services, ensuring standardization acro
 
 ## CLI Usage
 
-### Creating a New Project
-To create a new application, use `npx` to run the latest version of `app-kit`:
+`app-kit` is designed to be run using `npx`, ensuring you always have the latest templates and logic without needing a global installation.
+
+### 🚀 Creating a New Project (Factory)
+
+To scaffold a new standardized application, run:
 
 ```bash
-npx @mchen-lab/app-kit create <project-name> --port <port-number> [--with-frontend]
+npx @mchen-lab/app-kit create <project-name> [options]
 ```
+
+**Options:**
+- `--port <number>`: Internal port for the service (default: `3000`).
+- `--no-frontend`: Create a backend-only service.
+- `--vanilla`: Use Vanilla TypeScript instead of React for the frontend.
 
 **Example:**
 ```bash
-npx @mchen-lab/app-kit create my-service --port 3000 --with-frontend
+npx @mchen-lab/app-kit create my-service --port 8080
 ```
 
-### Updating an Existing Project
-`app-kit` is designed to be updated. As the platform evolves, you can pull in the latest build scripts, Dockerfiles, and CI configs by running:
+### 🔄 Updating Managed Files
+
+One of the core strengths of `app-kit` is lifecycle management. You can pull in the latest infrastructure fixes (Dockerfiles, CI scripts, build logic) by running:
 
 ```bash
-# Run inside your project root
+# Run this inside your project root
 npx @mchen-lab/app-kit update
 ```
+
+This will compare your project's "managed files" with the latest templates and update them safely.
 
 ## Configuration
 
