@@ -122,3 +122,7 @@ app.get("/api/hello", (req, res) => {
 
 app.listen(3000);
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
