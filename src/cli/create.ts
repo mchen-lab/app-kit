@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { execSync } from "child_process";
 import {
   getTemplatesDir,
   getAppKitVersion,
@@ -92,12 +93,36 @@ export async function createProject(
   if (options.withFrontend) {
     if (options.react) {
       userFiles.push(
+        // Main frontend files
         { src: "user/src/frontend-react/index.html", dest: "src/frontend/index.html" },
         { src: "user/src/frontend-react/main.tsx", dest: "src/frontend/main.tsx" },
         { src: "user/src/frontend-react/App.tsx", dest: "src/frontend/App.tsx" },
         { src: "user/src/frontend-react/styles.css", dest: "src/frontend/styles.css" },
+        
+        // Lib utilities
+        { src: "user/src/frontend-react/lib/utils.ts", dest: "src/frontend/lib/utils.ts" },
+        
+        // App-level components
         { src: "user/src/frontend-react/components/VersionBanner.tsx", dest: "src/frontend/components/VersionBanner.tsx" },
-        { src: "user/src/frontend-react/components/AboutDialog.tsx", dest: "src/frontend/components/AboutDialog.tsx" }
+        { src: "user/src/frontend-react/components/AboutDialog.tsx", dest: "src/frontend/components/AboutDialog.tsx" },
+        { src: "user/src/frontend-react/components/ConfigDialog.tsx", dest: "src/frontend/components/ConfigDialog.tsx" },
+        { src: "user/src/frontend-react/components/Layout.tsx", dest: "src/frontend/components/Layout.tsx" },
+        { src: "user/src/frontend-react/components/StatusCard.tsx", dest: "src/frontend/components/StatusCard.tsx" },
+        { src: "user/src/frontend-react/components/LogViewer.tsx", dest: "src/frontend/components/LogViewer.tsx" },
+        
+        // UI primitives (shadcn/radix-ui style)
+        { src: "user/src/frontend-react/components/ui/alert-dialog.tsx", dest: "src/frontend/components/ui/alert-dialog.tsx" },
+        { src: "user/src/frontend-react/components/ui/badge.tsx", dest: "src/frontend/components/ui/badge.tsx" },
+        { src: "user/src/frontend-react/components/ui/button.tsx", dest: "src/frontend/components/ui/button.tsx" },
+        { src: "user/src/frontend-react/components/ui/card.tsx", dest: "src/frontend/components/ui/card.tsx" },
+        { src: "user/src/frontend-react/components/ui/dialog.tsx", dest: "src/frontend/components/ui/dialog.tsx" },
+        { src: "user/src/frontend-react/components/ui/input.tsx", dest: "src/frontend/components/ui/input.tsx" },
+        { src: "user/src/frontend-react/components/ui/label.tsx", dest: "src/frontend/components/ui/label.tsx" },
+        { src: "user/src/frontend-react/components/ui/scroll-area.tsx", dest: "src/frontend/components/ui/scroll-area.tsx" },
+        { src: "user/src/frontend-react/components/ui/select.tsx", dest: "src/frontend/components/ui/select.tsx" },
+        { src: "user/src/frontend-react/components/ui/sonner.tsx", dest: "src/frontend/components/ui/sonner.tsx" },
+        { src: "user/src/frontend-react/components/ui/tabs.tsx", dest: "src/frontend/components/ui/tabs.tsx" },
+        { src: "user/src/frontend-react/components/ui/textarea.tsx", dest: "src/frontend/components/ui/textarea.tsx" }
       );
     } else {
       userFiles.push(
@@ -129,27 +154,57 @@ export async function createProject(
   await ensureDir(path.join(projectDir, "libs"));
   console.log(`✓ Created libs/`);
 
+  // Provision the library
+  try {
+    const libSource = path.resolve(templatesDir, "../libs/app-kit.tgz");
+    const libDest = path.join(projectDir, "libs/app-kit.tgz");
+    
+    let sourced = false;
+    if (await fs.stat(libSource).then(() => true).catch(() => false)) {
+      await fs.copyFile(libSource, libDest);
+      console.log(`✓ Provisioned @mchen-lab/app-kit library`);
+      sourced = true;
+    } else {
+      // Fallback: look in root for dev
+      const rootLibSource = path.resolve(templatesDir, "../mchen-lab-app-kit-0.1.1.tgz");
+      if (await fs.stat(rootLibSource).then(() => true).catch(() => false)) {
+        await fs.copyFile(rootLibSource, libDest);
+        console.log(`✓ Provisioned @mchen-lab/app-kit library (from root)`);
+        sourced = true;
+      }
+    }
+    
+    if (!sourced) {
+       console.warn(`⚠️  Warning: Library tarball not found at ${libSource}. Manual copy required.`);
+    }
+  } catch (e) {
+    console.warn(`⚠️  Warning: Could not provision library: ${e instanceof Error ? e.message : String(e)}`);
+  }
+
   // Create data directory
   await ensureDir(path.join(projectDir, "data"));
   console.log(`✓ Created data/`);
 
+  // Finalizing
+  console.log("\n✅ Project created successfully!");
+
+  try {
+    execSync('git init', { cwd: projectDir, stdio: 'ignore' });
+    console.log(`✓ Initialized git repository`);
+  } catch (e) {
+    // Ignore git init errors
+  }
+
   // Print next steps
   console.log(`
-✅ Project created successfully!
-
 Next steps:
   cd ${projectName}
-  
-  # Copy app-kit package
-  cd ../app-kit && npm run build && npm pack
-  mv mchen-lab-app-kit-*.tgz ../${projectName}/libs/app-kit.tgz
-  cd ../${projectName}
   
   # Install dependencies
   npm install
   
   # Start development
-  npm run dev:server
+  npm run dev
 
 To update managed files later:
   npx @mchen-lab/app-kit update

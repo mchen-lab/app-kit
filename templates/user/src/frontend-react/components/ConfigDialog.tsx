@@ -1,78 +1,188 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import { useState, useEffect, ReactNode } from "react";
+import { useAppKit } from "@mchen-lab/app-kit/frontend";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings } from "lucide-react";
+import { toast } from "sonner";
 
-interface ConfigDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+/**
+ * Tab configuration for ConfigDialog
+ */
+export interface ConfigTab {
+  /** Unique identifier for the tab */
+  id: string;
+  /** Display label for the tab */
+  label: string;
+  /** Content to render in the tab panel */
+  content: ReactNode;
 }
 
-export function ConfigDialog({ isOpen, onOpenChange }: ConfigDialogProps) {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
+interface ConfigDialogProps {
+  /**
+   * Array of tab configurations to render.
+   * If not provided, shows a default placeholder.
+   */
+  tabs?: ConfigTab[];
+  /**
+   * Callback when save button is clicked.
+   * Should return a Promise that resolves on success.
+   */
+  onSave?: () => Promise<void>;
+  /**
+   * Callback after dialog closes (after successful save)
+   */
+  onConfigUpdate?: () => void;
+  /**
+   * Dialog title (default: "Configuration")
+   */
+  title?: string;
+  /**
+   * Trigger button variant
+   */
+  triggerVariant?: "icon" | "button";
+  /**
+   * Custom trigger element (overrides triggerVariant)
+   */
+  trigger?: ReactNode;
+}
 
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+/**
+ * Enhanced ConfigDialog with Radix UI Dialog and Tabs support.
+ * 
+ * Example usage with tabs:
+ * ```tsx
+ * <ConfigDialog
+ *   tabs={[
+ *     { id: "general", label: "General", content: <GeneralSettings /> },
+ *     { id: "advanced", label: "Advanced", content: <AdvancedSettings /> },
+ *   ]}
+ *   onSave={async () => {
+ *     await fetch("/api/settings", { method: "POST", body: JSON.stringify(settings) });
+ *   }}
+ * />
+ * ```
+ */
+export function ConfigDialog({ 
+  tabs,
+  onSave,
+  onConfigUpdate,
+  title = "Configuration",
+  triggerVariant = "icon",
+  trigger
+}: ConfigDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { version, refreshSettings } = useAppKit();
 
-    if (isOpen) {
-      dialog.showModal();
-      document.body.style.overflow = 'hidden';
-    } else {
-      dialog.close();
-      document.body.style.overflow = '';
+  const handleSave = async () => {
+    if (!onSave) {
+      setOpen(false);
+      return;
     }
-  }, [isOpen]);
 
-  const handleClose = () => onOpenChange(false);
-
-  // Close on backdrop click
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === dialogRef.current) {
-      handleClose();
+    setLoading(true);
+    try {
+      await onSave();
+      toast.success("Configuration saved successfully");
+      setOpen(false);
+      refreshSettings();
+      if (onConfigUpdate) onConfigUpdate();
+    } catch (error) {
+      console.error("Failed to save:", error);
+      toast.error("Failed to save configuration");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <dialog
-      ref={dialogRef}
-      className="backdrop:bg-black/50 backdrop:backdrop-blur-sm bg-white rounded-xl shadow-2xl p-0 w-full max-w-lg m-auto open:animate-in open:fade-in open:zoom-in-95"
-      onClick={handleBackdropClick}
-      onCancel={handleClose}
+  // Default trigger button
+  const defaultTrigger = triggerVariant === "icon" ? (
+    <Button 
+      variant="ghost" 
+      size="icon" 
+      className="h-9 w-9 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full" 
+      title={title}
     >
-      <div className="flex flex-col max-h-[85vh]">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">Configuration</h2>
-            <p className="text-sm text-slate-500">Manage application settings.</p>
-          </div>
-          <button 
-            onClick={handleClose}
-            className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1 rounded-md transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        
-        <div className="p-6 overflow-y-auto space-y-4">
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600">
-            <p>This is a placeholder for your application configuration. You can add form fields, toggles, or JSON editors here.</p>
-          </div>
-        </div>
+      <Settings className="h-5 w-5" />
+    </Button>
+  ) : (
+    <Button variant="secondary">
+      <Settings className="h-4 w-4 mr-2" />
+      {title}
+    </Button>
+  );
 
-        <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 rounded-b-xl">
-          <button 
-            onClick={handleClose}
-            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+  // Default placeholder content
+  const defaultContent = (
+    <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600">
+      <p>This is a placeholder for your application configuration.</p>
+      <p className="mt-2">Provide the <code className="bg-slate-100 px-1 rounded">tabs</code> prop to add configuration sections.</p>
+    </div>
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {trigger || defaultTrigger}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[600px] h-[500px] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        
+        {tabs && tabs.length > 0 ? (
+          <Tabs defaultValue={tabs[0].id} className="flex-1 w-full flex flex-col min-h-0">
+            <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}>
+              {tabs.map((tab) => (
+                <TabsTrigger key={tab.id} value={tab.id}>{tab.label}</TabsTrigger>
+              ))}
+            </TabsList>
+            
+            <div className="flex-1 min-h-0 relative">
+              {tabs.map((tab) => (
+                <TabsContent 
+                  key={tab.id} 
+                  value={tab.id} 
+                  className="absolute inset-0 overflow-y-auto py-4"
+                >
+                  {tab.content}
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
+        ) : (
+          <div className="flex-1 overflow-y-auto py-4">
+            {defaultContent}
+          </div>
+        )}
+
+        <DialogFooter className="mt-4">
+          <Button 
+            type="submit" 
+            onClick={handleSave} 
+            disabled={loading} 
+            className="bg-slate-900 text-white"
           >
-            Cancel
-          </button>
-          <button 
-            onClick={handleClose}
-            className="px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 shadow-sm transition-colors"
-          >
-            Save Changes
-          </button>
+            {loading ? "Saving..." : "Save Configuration"}
+          </Button>
+        </DialogFooter>
+        
+        {/* Version info in corners */}
+        <div className="absolute bottom-2 left-4 text-xs text-muted-foreground opacity-50 pointer-events-none">
+          Commit: {version?.commit || 'unknown'}
         </div>
-      </div>
-    </dialog>
+        <div className="absolute bottom-2 right-4 text-xs text-muted-foreground opacity-50 pointer-events-none">
+          v{version?.version || '0.0.0'}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

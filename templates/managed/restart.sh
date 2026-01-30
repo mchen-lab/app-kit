@@ -95,7 +95,7 @@ start_server() {
     # Use npx tsx watch to start the server in watch mode
     # Ensure .env exists so --watch-path doesn't fail
     touch .env
-    npx tsx --watch --watch-path src --watch-path vite.config.ts --watch-path .env src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
+    npx tsx watch --ignore 'vite.config.ts.timestamp*' src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
     SERVER_PID=$!
     echo "✅ Server started with PID: $SERVER_PID"
     echo "📝 Server logs: $PROJECT_ROOT/logs/server.log"

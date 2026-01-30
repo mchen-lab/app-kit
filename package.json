@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "libs"
   ],
   "exports": {
     "./backend": {
@@ -26,7 +27,8 @@
     }
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && npm run package-lib",
+    "package-lib": "mkdir -p libs && rm -f *.tgz && npm pack && mv mchen-lab-app-kit-*.tgz libs/app-kit.tgz"
   },
   "dependencies": {
     "cors": "^2.8.5",

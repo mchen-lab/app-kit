@@ -3,6 +3,7 @@ import { createServer } from "http";
 import express, { type Request, type Response } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { WebSocketServer, WebSocket } from "ws";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -36,6 +37,52 @@ const VERSION = 'v' + (process.env.npm_package_version || "0.1.0") + (process.en
 const GIT_COMMIT = process.env.GIT_COMMIT || "";
 
 // =============================================================================
+// Logging Infrastructure (Real-time WebSocket logs)
+// =============================================================================
+
+interface LogEntry {
+  timestamp: string;
+  level: string;
+  message: string;
+}
+
+const logs: LogEntry[] = [];
+const MAX_LOGS = 500;
+const wsClients: Set<WebSocket> = new Set();
+
+/**
+ * Add a log entry and broadcast to all connected WebSocket clients.
+ * Use this throughout your application for real-time log visibility.
+ */
+function addLog(level: string, message: string) {
+  const entry: LogEntry = {
+    timestamp: new Date().toISOString(),
+    level,
+    message,
+  };
+  
+  logs.push(entry);
+  if (logs.length > MAX_LOGS) {
+    logs.splice(0, logs.length - MAX_LOGS);
+  }
+
+  const wsMessage = JSON.stringify({ type: "log", data: entry });
+  wsClients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(wsMessage);
+    }
+  });
+}
+
+// Log helper functions
+export const logger = {
+  info: (msg: string) => addLog("INFO", msg),
+  warn: (msg: string) => addLog("WARN", msg),
+  error: (msg: string) => addLog("ERROR", msg),
+  debug: (msg: string) => addLog("DEBUG", msg),
+};
+
+// =============================================================================
 // API Routes
 // =============================================================================
 
@@ -58,6 +105,16 @@ app.get("/api/version", (_req: Request, res: Response) => {
   });
 });
 
+// Logs API (REST endpoints for log management)
+app.get("/api/logs", (_req: Request, res: Response) => {
+  res.json({ logs });
+});
+
+app.delete("/api/logs", (_req: Request, res: Response) => {
+  logs.length = 0;
+  res.json({ success: true });
+});
+
 // Example: Access config
 app.get("/api/config-example", (_req: Request, res: Response) => {
   const config = appKit.config as AppConfig;
@@ -68,8 +125,10 @@ app.get("/api/config-example", (_req: Request, res: Response) => {
 app.post("/api/config-example", async (req: Request, res: Response) => {
   try {
     await appKit.updateConfig({ exampleSetting: req.body.exampleSetting });
+    logger.info(`Config updated: exampleSetting = ${req.body.exampleSetting}`);
     res.json({ success: true });
   } catch (error) {
+    logger.error(`Failed to update config: ${error}`);
     res.status(500).json({ error: "Failed to update config" });
   }
 });
@@ -82,6 +141,18 @@ async function start() {
   await appKit.initialize();
 
   const server = createServer(app);
+
+  // ==========================================================================
+  // WebSocket server for real-time logs
+  // Frontend LogViewer component connects to /ws/logs
+  // ==========================================================================
+  const wss = new WebSocketServer({ server, path: "/ws/logs" });
+  wss.on("connection", (ws: WebSocket) => {
+    wsClients.add(ws);
+    // Send log history on connect
+    ws.send(JSON.stringify({ type: "history", data: logs }));
+    ws.on("close", () => wsClients.delete(ws));
+  });
 
   // Frontend Serving Logic
   if (isProduction) {
@@ -126,6 +197,7 @@ async function start() {
 
   server.listen(PORT, () => {
     console.log(`🚀 {{PROJECT_NAME_TITLE}} running on http://localhost:${PORT}`);
+    logger.info("Server started successfully");
   });
 }
 
