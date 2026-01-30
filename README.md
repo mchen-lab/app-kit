@@ -46,6 +46,18 @@ This file is the source of truth for your project's infrastructure configuration
 }
 ```
 
+### Configuration Merging Priority
+App-Kit uses a multi-layered configuration strategy with the following priority (highest to lowest):
+1. **UI Configuration / `settings.json`**: Direct edits in the UI have the highest priority.
+2. **Environment Variables**: Overrides defaults (e.g., `EXAMPLE_SETTING=value`).
+3. **Default Config**: The `defaultConfig` object passed to `createApp`.
+
+### Persistence & Data Directory
+By default, `app-kit` stores its configuration in `data/settings.json`. You can override the data directory location using the `DATA_DIR` environment variable:
+```bash
+DATA_DIR=/path/to/my/data npm start
+```
+
 ### Managed Files (⚠️ CAUTION)
 App-Kit enforces consistency by "managing" specific files. **Do not edit these files manually**, as they will be overwritten the next time you run `app-kit update`.
 
