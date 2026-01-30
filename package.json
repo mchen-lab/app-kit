@@ -1,6 +1,6 @@
 {
   "name": "@mchen-lab/app-kit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Standard Application Shell for the News Workspace Fleet",
   "type": "module",
   "main": "dist/backend/index.js",
