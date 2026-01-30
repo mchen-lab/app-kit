@@ -186,8 +186,8 @@ export class AppKit {
     // Version Info
     router.get("/version", (req, res) => {
       res.json({
-        version: process.env.VITE_APP_VERSION || process.env.npm_package_version || "dev",
-        commit: process.env.VITE_COMMIT_HASH || "unknown"
+        version: process.env.VITE_APP_VERSION || process.env.BUILD_METADATA || process.env.npm_package_version || "dev",
+        commit: process.env.VITE_COMMIT_HASH || process.env.GIT_COMMIT || "unknown"
       });
     });
 
