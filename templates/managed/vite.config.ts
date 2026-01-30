@@ -16,7 +16,8 @@ let commitHash = process.env.GIT_COMMIT;
 if (!commitHash) {
   try {
     // Only try git if not provided via env (dev mode)
-    commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+    // Redirect stderr to null to avoid "fatal: Needed a single revision" in new repos
+    commitHash = execSync('git rev-parse --short HEAD 2>/dev/null').toString().trim();
   } catch (e) {
     commitHash = 'unknown';
   }

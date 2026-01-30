@@ -195,7 +195,15 @@ async function start() {
     }
   }
 
-  server.listen(PORT, () => {
+  server.on("error", (err: any) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`❌ Port ${PORT} is already in use. Please check for zombie processes.`);
+    } else {
+      console.error(`❌ Server error: ${err.message}`);
+    }
+  });
+
+  server.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`🚀 {{PROJECT_NAME_TITLE}} running on http://localhost:${PORT}`);
     logger.info("Server started successfully");
   });

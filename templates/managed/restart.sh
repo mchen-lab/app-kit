@@ -31,8 +31,8 @@ kill_port() {
 
     echo "Checking for existing $process_name processes on port $port..."
     
-    # use lsof to get PIDs
-    local pids=$(lsof -ti :$port -sTCP:LISTEN 2>/dev/null)
+    # use lsof to get PIDs - remove LISTEN filter to catch processes in transition
+    local pids=$(lsof -ti :$port 2>/dev/null)
     
     if [ ! -z "$pids" ]; then
         # Iterate through PIDs to check their command name
@@ -95,7 +95,7 @@ start_server() {
     # Use npx tsx watch to start the server in watch mode
     # Ensure .env exists so --watch-path doesn't fail
     touch .env
-    npx tsx watch --ignore 'vite.config.ts.timestamp*' src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
+    npx tsx watch --ignore 'vite.config.ts.timestamp*' --ignore 'logs/**/*' --ignore 'data/**/*' src/server/index.ts >> "$PROJECT_ROOT/logs/server.log" 2>&1 &
     SERVER_PID=$!
     echo "✅ Server started with PID: $SERVER_PID"
     echo "📝 Server logs: $PROJECT_ROOT/logs/server.log"
