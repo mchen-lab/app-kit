@@ -156,6 +156,13 @@ App-Kit projects include a robust logging system:
 - **Real-time**: Broadcasters events to connected WebSocket clients for UI display.
 - **Persistent**: Automatically appends all logs to `${LOGS_DIR}/app.log` for troubleshooting and audits.
 
+#### Backend Testing
+App-Kit provides a standardized testing environment for backend logic using Vitest. Run tests using:
+```bash
+npm test
+```
+The test runner is configured to look for test files in `src/server/`.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

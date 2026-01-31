@@ -92,6 +92,7 @@ export async function createProject(
     { src: "user/CONTRIBUTING.md", dest: "CONTRIBUTING.md" },
     { src: "user/CODE_OF_CONDUCT.md", dest: "CODE_OF_CONDUCT.md" },
     { src: "user/SECURITY.md", dest: "SECURITY.md" },
+    { src: "user/vitest.config.ts", dest: "vitest.config.ts" },
   ];
 
   if (options.withFrontend) {
