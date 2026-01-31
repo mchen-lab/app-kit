@@ -9,6 +9,7 @@ import {
   isManagedFile,
   ensureDir,
   MANAGED_FILES,
+  copyFile,
 } from "./utils.js";
 
 export interface UpdateOptions {
@@ -125,6 +126,9 @@ export async function updateProject(options: UpdateOptions): Promise<void> {
     }
   }
 
+  // Sync library tarball
+  await syncLibrary(projectDir, templatesDir, options);
+
   console.log(`
 Summary:
   Updated: ${updated}
@@ -134,5 +138,28 @@ Summary:
 
   if (options.dryRun) {
     console.log("Run without --dry-run to apply changes.");
+  }
+}
+
+async function syncLibrary(projectDir: string, templatesDir: string, options: UpdateOptions): Promise<void> {
+  const libFile = "app-kit.tgz";
+  const libSource = path.resolve(templatesDir, "../libs", libFile);
+  const libDestDir = path.join(projectDir, "libs");
+  const libDest = path.join(libDestDir, libFile);
+
+  if (options.dryRun) {
+    console.log(`Would sync library: libs/${libFile}`);
+    return;
+  }
+
+  try {
+    // Ensure libs directory exists
+    await ensureDir(libDestDir);
+
+    // Copy the library
+    await fs.copyFile(libSource, libDest);
+    console.log(`✓ Synchronized @mchen-lab/app-kit library`);
+  } catch (err) {
+    console.warn(`⚠️  Warning: Could not synchronize library: ${err instanceof Error ? err.message : String(err)}`);
   }
 }

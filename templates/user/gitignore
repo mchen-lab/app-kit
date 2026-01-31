@@ -3,6 +3,7 @@ dist/
 dist-server/
 data/
 libs/
+!libs/app-kit.tgz
 *.log
 .env
 .env.local
