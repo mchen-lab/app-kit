@@ -63,10 +63,15 @@ App-Kit uses a multi-layered configuration strategy with the following priority 
 2. **Environment Variables**: Overrides defaults (e.g., `EXAMPLE_SETTING=value`).
 3. **Default Config**: The `defaultConfig` object passed to `createApp`.
 
-### Persistence & Data Directory
-By default, `app-kit` stores its configuration in `data/settings.json`. You can override the data directory location using the `DATA_DIR` environment variable:
+### Persistence & Directories
+By default, `app-kit` uses a standardized directory structure for data and logs:
+
+- **`DATA_DIR`**: Location for configuration files (defaults to `./data`). Stores `settings.json`.
+- **`LOGS_DIR`**: Location for persistent log files (defaults to `./logs`). Stores `app.log`.
+
+You can override these locations using environment variables:
 ```bash
-DATA_DIR=/path/to/my/data npm start
+DATA_DIR=/path/to/data LOGS_DIR=/path/to/logs npm start
 ```
 
 ### Managed Files (⚠️ CAUTION)
@@ -145,6 +150,11 @@ app.get("/api/hello", (req, res) => {
 
 app.listen(3000);
 ```
+
+#### Real-time & Persistent Logging
+App-Kit projects include a robust logging system:
+- **Real-time**: Broadcasters events to connected WebSocket clients for UI display.
+- **Persistent**: Automatically appends all logs to `${LOGS_DIR}/app.log` for troubleshooting and audits.
 
 ## License
 

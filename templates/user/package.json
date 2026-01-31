@@ -1,6 +1,7 @@
 {
   "name": "{{PROJECT_NAME}}",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server/index.ts",

@@ -8,10 +8,7 @@ Currently only the latest version of this project is supported with security upd
 
 If you've found a potential security vulnerability in this project, please **do not open a public issue**.
 
-Instead, please report it via one of the following methods:
-
-1.  **Email**: [INSERT EMAIL]
-2.  **GitHub**: Use the GitHub security advisory reporting feature if available.
+Please report it to the maintainers directly or via GitHub security advisories if supported.
 
 We will acknowledge your report within 48 hours and provide a timeline for a fix if applicable.
 

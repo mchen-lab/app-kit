@@ -13,6 +13,7 @@ export interface AppKitOptions {
   appName: string;
   defaultConfig: BaseConfig;
   configPath?: string;
+  logsDir?: string;
   disableStatic?: boolean;
   onConfigChange?: (config: BaseConfig) => void;
   recreateMissingConfig?: boolean;
@@ -33,6 +34,7 @@ export class AppKit {
   public config: BaseConfig;
   private options: AppKitOptions;
   private configPath: string;
+  private logsDir: string;
   private port: number | string | null = null;
 
   constructor(options: AppKitOptions) {
@@ -42,6 +44,8 @@ export class AppKit {
     
     const dataDir = process.env.DATA_DIR || path.resolve(process.cwd(), "data");
     this.configPath = options.configPath || path.join(dataDir, "settings.json");
+
+    this.logsDir = process.env.LOGS_DIR || options.logsDir || path.resolve(process.cwd(), "logs");
 
     this.setupMiddleware();
   }
@@ -82,6 +86,7 @@ export class AppKit {
   private async loadConfig() {
     try {
       await fs.mkdir(path.dirname(this.configPath), { recursive: true });
+      await fs.mkdir(this.logsDir, { recursive: true });
 
       // 1. Hydrate from Environment Variables (Default < Env)
       // Strategy: Look for keys present in defaultConfig (case-insensitive)
@@ -154,6 +159,13 @@ export class AppKit {
    */
   public getConfigPath(): string {
     return this.configPath;
+  }
+
+  /**
+   * Get the logs directory path (read-only access)
+   */
+  public getLogsDir(): string {
+    return this.logsDir;
   }
 
   private setupRoutes() {

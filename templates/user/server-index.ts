@@ -4,6 +4,7 @@ import express, { type Request, type Response } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { WebSocketServer, WebSocket } from "ws";
+import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,6 +36,8 @@ const isProduction = process.env.NODE_ENV === "production";
 // Version info from build
 const VERSION = 'v' + (process.env.npm_package_version || "0.1.0") + (process.env.BUILD_METADATA || "");
 const GIT_COMMIT = process.env.GIT_COMMIT || "";
+const LOGS_DIR = appKit.getLogsDir();
+const LOG_FILE_PATH = path.resolve(LOGS_DIR, "app.log");
 
 // =============================================================================
 // Logging Infrastructure (Real-time WebSocket logs)
@@ -72,6 +75,14 @@ function addLog(level: string, message: string) {
       client.send(wsMessage);
     }
   });
+
+  // Persistent logging
+  try {
+    const logLine = `[${entry.timestamp}] [${entry.level}] ${entry.message}\n`;
+    fs.appendFileSync(LOG_FILE_PATH, logLine);
+  } catch (err) {
+    // Silently continue
+  }
 }
 
 // Log helper functions
@@ -112,7 +123,26 @@ app.get("/api/logs", (_req: Request, res: Response) => {
 
 app.delete("/api/logs", (_req: Request, res: Response) => {
   logs.length = 0;
+  try {
+    if (fs.existsSync(LOG_FILE_PATH)) {
+      fs.writeFileSync(LOG_FILE_PATH, "");
+    }
+  } catch (err) { }
   res.json({ success: true });
+});
+
+// Get log file content
+app.get("/api/logs/file", async (_req: Request, res: Response) => {
+  try {
+    if (fs.existsSync(LOG_FILE_PATH)) {
+      const content = fs.readFileSync(LOG_FILE_PATH, "utf-8");
+      res.type("text/plain").send(content);
+    } else {
+      res.status(404).json({ error: "Log file not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read log file" });
+  }
 });
 
 // Example: Access config

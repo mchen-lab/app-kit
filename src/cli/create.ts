@@ -88,6 +88,10 @@ export async function createProject(
     { src: "user/gitignore", dest: ".gitignore" },
     { src: "user/README.md", dest: "README.md" },
     { src: "user/CHANGELOG.md", dest: "CHANGELOG.md" },
+    { src: "user/LICENSE", dest: "LICENSE" },
+    { src: "user/CONTRIBUTING.md", dest: "CONTRIBUTING.md" },
+    { src: "user/CODE_OF_CONDUCT.md", dest: "CODE_OF_CONDUCT.md" },
+    { src: "user/SECURITY.md", dest: "SECURITY.md" },
   ];
 
   if (options.withFrontend) {

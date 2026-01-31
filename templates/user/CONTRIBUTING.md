@@ -1,6 +1,6 @@
-# Contributing to @mchen-lab/app-kit
+# Contributing to {{PROJECT_NAME_TITLE}}
 
-Thank you for your interest in contributing to App-Kit! 🎉
+First off, thank you for considering contributing to {{PROJECT_NAME_TITLE}}! It's people like you that make this community such a great place.
 
 ## How Can I Help?
 
@@ -17,14 +17,13 @@ Documentation improvements are always welcome. Feel free to submit a PR if you f
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Run tests/build: `npm run build`
+3. Start development server: `./restart.sh`
 
 ## Pull Request Process
 
 1. Fork the repository
 2. Create a new branch for your changes
-3. If your changes affect the core logic, please include tests
-4. Submit a Pull Request describing your changes
+3. Submit a Pull Request describing your changes
 
 ---
 

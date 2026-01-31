@@ -40,8 +40,8 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
-# Create data directory for persistence
-RUN mkdir -p /app/data && chmod 777 /app/data
+# Create directories for persistence
+RUN mkdir -p /app/data /app/logs && chmod 777 /app/data /app/logs
 
 # Copy package files
 COPY package*.json ./
@@ -62,6 +62,8 @@ EXPOSE {{PORT}}
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT={{PORT}}
+ENV DATA_DIR=/app/data
+ENV LOGS_DIR=/app/logs
 # Also pass build info to production for runtime API
 ARG GIT_COMMIT
 ARG BUILD_METADATA

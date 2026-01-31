@@ -27,10 +27,26 @@ This project was bootstrapped with [@mchen-lab/app-kit](https://github.com/mchen
     npm run build
     ```
 
+## Configuration & Persistence
+ 
+This project follows specific standards for configuration and data management:
+
+-   **`DATA_DIR`**: Location for configuration files (defaults to `./data`). All UI settings are saved to `data/settings.json`.
+-   **`LOGS_DIR`**: Location for persistent log files (defaults to `./logs`). The server automatically appends logs to `logs/app.log`.
+
+### Environment Overrides
+You can override default configuration keys using environment variables. For example, to override `exampleSetting`:
+```bash
+EXAMPLE_SETTING="custom-value" ./restart.sh
+```
+
 ## Project Structure
 
--   `src/server`: Backend logic (Express + AppKit).
--   `src/frontend`: Frontend React application.
--   `libs`: Local dependencies (e.g., `app-kit.tgz`).
--   `data`: Persistent data storage.
--   `logs`: Application logs.
+```
+├── data/           # Persistent configuration (settings.json)
+├── logs/           # Persistent application logs (app.log)
+├── src/
+│   ├── server/     # Backend logic (Express + AppKit)
+│   └── frontend/   # Frontend React application
+└── libs/           # Local dependencies (app-kit.tgz)
+```
