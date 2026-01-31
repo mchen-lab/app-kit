@@ -6,5 +6,6 @@
   "imageName": "{{PROJECT_NAME}}",
   "containerName": "{{PROJECT_NAME}}",
   "volumeName": "{{PROJECT_NAME_SNAKE}}_data",
-  "ports": [{{PORT}}]
+  "ports": [{{PORT}}],
+  "allowedProcesses": ["node"]
 }

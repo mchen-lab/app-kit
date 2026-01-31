@@ -2,7 +2,7 @@ node_modules/
 dist/
 dist-server/
 data/
-libs/
+libs/*
 !libs/app-kit.tgz
 *.log
 .env

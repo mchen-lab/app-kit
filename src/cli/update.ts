@@ -50,11 +50,22 @@ export async function updateProject(options: UpdateOptions): Promise<void> {
 
   // Template variables
   const projectName = devopsConfig.projectName || path.basename(projectDir);
+  
+  // Get ports array, default to single port
+  const ports: number[] = devopsConfig.ports || [3000];
+  const portsArray = ports.join(" ");
+  
+  // Get allowed processes, default to "node"
+  const allowedProcesses: string[] = devopsConfig.allowedProcesses || ["node"];
+  const allowedProcessesRegex = allowedProcesses.join("|");
+  
   const variables: Record<string, string> = {
     PROJECT_NAME: devopsConfig.imageName || projectName.toLowerCase().replace(/\s+/g, "-"),
     PROJECT_NAME_SNAKE: (devopsConfig.imageName || projectName).replace(/-/g, "_"),
     PROJECT_NAME_TITLE: projectName,
-    PORT: String(devopsConfig.ports?.[0] || 3000),
+    PORT: String(ports[0] || 3000),
+    PORTS_ARRAY: portsArray,
+    ALLOWED_PROCESSES: allowedProcessesRegex,
     VERSION: version,
   };
 
@@ -135,6 +146,8 @@ Summary:
   Created: ${created}
   Skipped: ${skipped}
 `);
+
+  console.log("💡 Tip: If the library was updated, run: npm install ./libs/app-kit.tgz\n");
 
   if (options.dryRun) {
     console.log("Run without --dry-run to apply changes.");
