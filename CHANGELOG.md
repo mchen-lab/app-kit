@@ -2,6 +2,11 @@
 
 All notable changes to the `@mchen-lab/app-kit` project will be documented in this file.
 
+## [0.1.12] - 2026-01-31
+
+### Fixed
+- Fixed CI runner pickup by using standard lowercase labels `[self-hosted, linux, x64]`.
+
 ## [0.1.11] - 2026-01-31
 
 ### Changed
