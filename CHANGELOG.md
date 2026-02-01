@@ -2,6 +2,20 @@
 
 All notable changes to the `@mchen-lab/app-kit` project will be documented in this file.
 
+## [0.1.8] - 2026-01-31
+
+### Added
+- Automatic `package-lock.json` integrity hash refresh in the `update` command.
+- CLI now runs `npm install` on the local tarball after synchronization to prevent CI failures.
+
+## [0.1.7] - 2026-01-31
+
+### Added
+- Redesigned `Layout` component with mobile-responsive two-tier header.
+- Secondary action bar slot for service-specific control buttons.
+- Full-width content container support in the main layout.
+- Improved logo handling with automatic fallback to title initial.
+
 ## [0.1.6] - 2026-01-30
 
 ### Added

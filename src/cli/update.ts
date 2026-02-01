@@ -1,5 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execPromise = promisify(exec);
 import {
   getTemplatesDir,
   getAppKitVersion,
@@ -147,8 +151,6 @@ Summary:
   Skipped: ${skipped}
 `);
 
-  console.log("💡 Tip: If the library was updated, run: npm install ./libs/app-kit.tgz\n");
-
   if (options.dryRun) {
     console.log("Run without --dry-run to apply changes.");
   }
@@ -172,6 +174,16 @@ async function syncLibrary(projectDir: string, templatesDir: string, options: Up
     // Copy the library
     await fs.copyFile(libSource, libDest);
     console.log(`✓ Synchronized @mchen-lab/app-kit library`);
+
+    // Automatically refresh integrity hash in package-lock.json
+    try {
+      console.log(`⏳ Refreshing lockfile hash...`);
+      await execPromise(`npm install ./libs/${libFile}`, { cwd: projectDir });
+      console.log(`✓ Refreshed package-lock.json integrity hash`);
+    } catch (npmErr) {
+      console.warn(`⚠️  Warning: Could not refresh lockfile hash: ${npmErr instanceof Error ? npmErr.message : String(npmErr)}`);
+      console.warn(`   You may need to run 'npm install ./libs/${libFile}' manually.`);
+    }
   } catch (err) {
     console.warn(`⚠️  Warning: Could not synchronize library: ${err instanceof Error ? err.message : String(err)}`);
   }
