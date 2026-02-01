@@ -2,6 +2,11 @@
 
 All notable changes to the `@mchen-lab/app-kit` project will be documented in this file.
 
+## [0.1.11] - 2026-01-31
+
+### Changed
+- Migrated default CI runner from `ubuntu-latest` to `self-hosted` in managed templates.
+
 ## [0.1.10] - 2026-01-31
 
 ### Changed
