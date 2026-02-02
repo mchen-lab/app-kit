@@ -4,6 +4,7 @@ dist-server/
 data/
 libs/*
 !libs/app-kit.tgz
+logs/
 *.log
 .env
 .env.local
