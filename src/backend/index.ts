@@ -17,6 +17,7 @@ export interface AppKitOptions {
   disableStatic?: boolean;
   onConfigChange?: (config: BaseConfig) => void;
   recreateMissingConfig?: boolean;
+  bodyLimit?: string;  // Express JSON body limit (default: '10mb')
 }
 
 // Utility function for checking file existence
@@ -64,7 +65,7 @@ export class AppKit {
 
   private setupMiddleware() {
     this.app.use(cors());
-    this.app.use(express.json());
+    this.app.use(express.json({ limit: this.options.bodyLimit || '10mb' }));
     
     // Request logging middleware
     this.app.use((req, res, next) => {
